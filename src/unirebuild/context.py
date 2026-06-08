@@ -13,7 +13,7 @@ class PatcherContext:
         self.platform = sys.platform
         self.is_ci = "CI" in os.environ
         self.args = None
-        self.executable_cache = {}
+        self.__executable_cache = {}
 
     def get_temp_path(self, *paths: str) -> str:
         """Resolves a path within the temporary directory."""
@@ -21,8 +21,8 @@ class PatcherContext:
 
     def find_executable(self, name: str) -> str | None:
         """Finds the path of an executable on the system path or in the current directory."""
-        if name in self.executable_cache:
-            return self.executable_cache[name]
+        if name in self.__executable_cache:
+            return self.__executable_cache[name]
 
         search_name = name
         if self.platform == "win32":
@@ -30,13 +30,13 @@ class PatcherContext:
 
         local_path = os.path.abspath(os.path.join(os.getcwd(), search_name))
         if os.path.isfile(local_path) and os.access(local_path, os.X_OK):
-            self.executable_cache[name] = local_path
+            self.__executable_cache[name] = local_path
             return local_path
 
         system_path = shutil.which(search_name)
         if system_path:
             abs_system_path = os.path.abspath(system_path)
-            self.executable_cache[name] = abs_system_path
+            self.__executable_cache[name] = abs_system_path
             return abs_system_path
 
         return None
@@ -44,8 +44,8 @@ class PatcherContext:
     def find_unity(self, version: str) -> list[str] | None:
         """Finds the Unity executable for a given version."""
         cache_key = f"unity_{version}"
-        if cache_key in self.executable_cache:
-            return self.executable_cache[cache_key]
+        if cache_key in self.__executable_cache:
+            return self.__executable_cache[cache_key]
 
         if self.is_ci:
             docker_cmd = [
@@ -59,7 +59,7 @@ class PatcherContext:
                 f"unityci/editor:ubuntu-{version}-linux-il2cpp-3",
                 "unity-editor",
             ]
-            self.executable_cache[cache_key] = docker_cmd
+            self.__executable_cache[cache_key] = docker_cmd
             return docker_cmd
 
         unity_path = ""
@@ -74,7 +74,7 @@ class PatcherContext:
 
         if unity_path and os.path.isfile(unity_path):
             cmd = [unity_path]
-            self.executable_cache[cache_key] = cmd
+            self.__executable_cache[cache_key] = cmd
             return cmd
 
         return None
