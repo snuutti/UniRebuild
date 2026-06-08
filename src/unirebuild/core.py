@@ -46,6 +46,9 @@ class UniRebuild:
         args = parser.parse_args()
         self.context.args = args
 
+        self.context.setup_steps = self.setup_steps
+        self.context.rebuild_steps = self.rebuild_steps
+
         if args.command == "setup":
             if os.path.exists(self.context.workspace_dir):
                 logging.error(
@@ -58,7 +61,19 @@ class UniRebuild:
                 shutil.rmtree(self.context.temp_dir)
 
             self.run_pipeline(self.setup_steps, True)
+
+            logging.info(
+                "Setup completed successfully! You can now open '%s' in Unity.",
+                self.context.workspace_dir,
+            )
         elif args.command == "rebuild":
+            if not os.path.exists(self.context.workspace_dir):
+                logging.error(
+                    "Workspace directory '%s' does not exist. Please run 'setup' first.",
+                    self.context.workspace_dir,
+                )
+                sys.exit(1)
+
             self.run_pipeline(self.rebuild_steps, False)
 
     def run_pipeline(self, steps: list[PatcherStep], cleanup_temp: bool):

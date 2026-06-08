@@ -13,6 +13,8 @@ class PatcherContext:
         self.platform = sys.platform
         self.is_ci = "CI" in os.environ
         self.args = None
+        self.setup_steps = []
+        self.rebuild_steps = []
         self.__executable_cache = {}
 
     def get_temp_path(self, *paths: str) -> str:
