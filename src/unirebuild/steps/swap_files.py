@@ -17,7 +17,7 @@ class SwapFiles(PatcherStep):
 
             if os.path.isfile(src_path) and os.path.isfile(dst_path):
                 logging.info("Swapping '%s' and '%s'...", src, dst)
-                temp_path = dst + ".temp"
+                temp_path = dst_path + ".temp"
                 shutil.move(src_path, temp_path)
                 shutil.move(dst_path, src_path)
                 shutil.move(temp_path, dst_path)
