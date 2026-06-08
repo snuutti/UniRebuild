@@ -12,17 +12,13 @@ from unirebuild.steps import PatcherStep
 
 
 class RunAssetRipper(PatcherStep):
-    def __init__(self, source_dir: str, target_dir: str):
-        self.source_dir = source_dir
-        self.target_dir = target_dir
-
     def get_dependencies(self) -> list[str]:
         return ["AssetRipper.GUI.Free"]
 
     def execute(self, context: PatcherContext):
         assetripper_path = context.find_executable("AssetRipper.GUI.Free")
-        input_dir = context.get_temp_path(self.source_dir)
-        output_dir = context.get_temp_path(self.target_dir)
+        input_dir = context.get_extracted_path()
+        output_dir = context.get_temp_path("RippedProject")
 
         cmd = [assetripper_path, "--headless", "--log=false", "--port=6464"]
 

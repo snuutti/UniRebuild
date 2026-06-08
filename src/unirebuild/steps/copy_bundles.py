@@ -8,9 +8,8 @@ from unirebuild.steps import PatcherStep
 
 
 class CopyBundles(PatcherStep):
-    def __init__(self, bundles_path_arg: str = "bundles", target_dir: str = "bundles"):
+    def __init__(self, bundles_path_arg: str = "bundles"):
         self.bundles_path_arg = bundles_path_arg
-        self.target_dir = target_dir
 
     def register_arguments(self, parser: ArgumentParser):
         parser.add_argument(
@@ -20,7 +19,7 @@ class CopyBundles(PatcherStep):
 
     def execute(self, context: PatcherContext):
         bundles_src = getattr(context.args, self.bundles_path_arg)
-        bundles_dst = context.get_temp_path(self.target_dir)
+        bundles_dst = os.path.join(context.get_extracted_path(), "bundles")
 
         if not os.path.exists(bundles_src):
             raise FileNotFoundError(

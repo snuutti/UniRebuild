@@ -19,6 +19,10 @@ class PatcherContext:
         """Resolves a path within the temporary directory."""
         return os.path.join(self.temp_dir, *paths)
 
+    def get_extracted_path(self) -> str:
+        """Returns the path where the app was extracted."""
+        return self.get_temp_path("extracted_app")
+
     def find_executable(self, name: str) -> str | None:
         """Finds the path of an executable on the system path or in the current directory."""
         if name in self.__executable_cache:
