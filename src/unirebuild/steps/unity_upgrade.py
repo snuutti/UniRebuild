@@ -26,7 +26,7 @@ class UnityUpgrade(PatcherStep):
             self.execute_method,
         ]
 
-        if "CI" in os.environ:
+        if context.is_ci:
             unity_log = "/dev/stdout"
             unity_args += [
                 "-serial",

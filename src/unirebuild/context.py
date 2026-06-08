@@ -11,6 +11,7 @@ class PatcherContext:
         self.workspace_dir = os.path.abspath(workspace_dir)
         self.temp_dir = os.path.abspath(temp_dir)
         self.platform = sys.platform
+        self.is_ci = "CI" in os.environ
         self.args = None
         self.executable_cache = {}
 
@@ -46,7 +47,7 @@ class PatcherContext:
         if cache_key in self.executable_cache:
             return self.executable_cache[cache_key]
 
-        if "CI" in os.environ:
+        if self.is_ci:
             docker_cmd = [
                 "docker",
                 "run",
