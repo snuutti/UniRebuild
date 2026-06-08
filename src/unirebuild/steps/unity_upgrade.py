@@ -43,3 +43,15 @@ class UnityUpgrade(PatcherStep):
             self.unity_version,
         )
         context.run_cmd(unity_cmd + unity_args)
+
+        if context.is_ci and context.platform == "linux":
+            logging.info("Fixing file permissions...")
+            context.run_cmd(
+                [
+                    "sudo",
+                    "chown",
+                    "-R",
+                    f"{os.getuid()}:{os.getgid()}",
+                    context.workspace_dir,
+                ]
+            )
