@@ -12,6 +12,6 @@ class CopyGitignore(PatcherStep):
 
     def execute(self, context: PatcherContext):
         logging.info("Copy .gitignore...")
-        gitignore_src = os.path.join(os.path.dirname(__file__), self.source)
+        gitignore_src = os.path.abspath(self.source)
         gitignore_dst = os.path.join(context.workspace_dir, ".gitignore")
         shutil.copyfile(gitignore_src, gitignore_dst)
