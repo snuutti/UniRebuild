@@ -4,6 +4,8 @@ import os
 import shutil
 import sys
 
+import colorlog
+
 from .steps import PatcherStep
 from .context import PatcherContext
 
@@ -21,6 +23,12 @@ class UniRebuild:
         self.rebuild_steps.extend(steps)
 
     def execute(self):
+        colorlog.basicConfig(
+            level=logging.INFO, format="%(log_color)s%(levelname)s: %(message)s"
+        )
+
+        sys.stdout.reconfigure(line_buffering=True)
+
         parser = argparse.ArgumentParser(
             description=f"UniRebuild - {self.context.game_name} Patcher"
         )
