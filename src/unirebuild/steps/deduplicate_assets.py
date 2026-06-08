@@ -28,8 +28,7 @@ class DeduplicateAssets(PatcherStep):
             filtered_liens = [line for line in lines if not line.startswith("guid: ")]
             return "".join(filtered_liens)
         except Exception as e:
-            logging.error("Failed to read and filter '%s': %s", file_path, e)
-            return ""
+            raise RuntimeError(f"Failed to read and filter '{file_path}': {e}")
 
     def deduplicate_assets(self, context: PatcherContext) -> int:
         logging.info("Scanning for duplicate assets...")
@@ -95,8 +94,7 @@ class DeduplicateAssets(PatcherStep):
                         )
 
                 except Exception as e:
-                    logging.error("Failed to process '%s': %s", asset_path, e)
-                    continue
+                    raise RuntimeError(f"Failed to process '{asset_path}': {e}")
 
         if count > 0:
             logging.info("Removed %d duplicate assets.", count)

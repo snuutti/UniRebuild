@@ -22,8 +22,6 @@ class SwapFiles(PatcherStep):
                 shutil.move(dst_path, src_path)
                 shutil.move(temp_path, dst_path)
             else:
-                logging.warning(
-                    "Cannot swap '%s' and '%s' because one or both files do not exist.",
-                    src,
-                    dst,
+                raise FileNotFoundError(
+                    f"Cannot swap '{src}' and '{dst}' because one or both files do not exist."
                 )
