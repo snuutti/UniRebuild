@@ -1,5 +1,5 @@
-from .apply_patches import ApplyPatches
 from .base import PatcherStep
+from .apply_patches import ApplyPatches
 from .copy_bundles import CopyBundles
 from .copy_gitignore import CopyGitignore
 from .copy_overrides import CopyOverrides
