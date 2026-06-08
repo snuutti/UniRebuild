@@ -9,6 +9,7 @@ from .deduplicate_assets import DeduplicateAssets
 from .delete_assets import DeleteAssets
 from .extract_app import ExtractApp
 from .generate_deterministic_guids import GenerateDeterministicGuids
+from .git_commit import GitCommit
 from .git_init import GitInit
 from .populate_texture_settings import PopulateTextureSettings
 from .reencode_wavs import ReencodeWavs

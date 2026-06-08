@@ -15,16 +15,3 @@ class GitInit(PatcherStep):
         context.run_cmd(
             [git_path, "config", "core.autocrlf", "false"], cwd=context.workspace_dir
         )
-        context.run_cmd([git_path, "add", "."], cwd=context.workspace_dir)
-        context.run_cmd(
-            [
-                git_path,
-                "commit",
-                "-m",
-                "Initial Commit",
-                "--author",
-                "UniRebuild <auto@mated.null>",
-            ],
-            cwd=context.workspace_dir,
-        )
-        context.run_cmd([git_path, "tag", "raw-project"], cwd=context.workspace_dir)
