@@ -47,6 +47,16 @@ class UniRebuild:
         self.context.args = args
 
         if args.command == "setup":
+            if os.path.exists(self.context.workspace_dir):
+                logging.error(
+                    "Workspace directory '%s' already exists. Please remove it before running setup.",
+                    self.context.workspace_dir,
+                )
+                sys.exit(1)
+
+            if os.path.exists(self.context.temp_dir):
+                shutil.rmtree(self.context.temp_dir)
+
             self.run_pipeline(self.setup_steps, True)
         elif args.command == "rebuild":
             self.run_pipeline(self.rebuild_steps, False)
