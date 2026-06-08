@@ -1,0 +1,19 @@
+name: Lint
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Python
+        uses: astral-sh/setup-uv@v8.2.0
+      - name: Run Ruff Check
+        run: uv run ruff check
+      - name: Run Ruff Format Check
+        run: uv run ruff format --check
