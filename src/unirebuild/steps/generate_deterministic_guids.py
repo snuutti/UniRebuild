@@ -4,13 +4,19 @@ import os
 import re
 import subprocess
 
+from unirebuild.constants import GUID_REFERENCE_EXTENSIONS
 from unirebuild.context import PatcherContext
 from unirebuild.steps import PatcherStep
 
 
 class GenerateDeterministicGuids(PatcherStep):
-    def __init__(self, new_assets_only: bool = False):
+    def __init__(
+        self,
+        new_assets_only: bool = False,
+        guid_reference_extensions: set[str] | None = None,
+    ):
         self.new_assets_only = new_assets_only
+        self.guid_reference_extensions = guid_reference_extensions
 
     def get_dependencies(self) -> list[str]:
         if self.new_assets_only:
@@ -99,12 +105,17 @@ class GenerateDeterministicGuids(PatcherStep):
             found_guid = guid_match.group(1)
             return guid_map.get(found_guid, found_guid)
 
+        guid_reference_extensions = (
+            self.guid_reference_extensions or GUID_REFERENCE_EXTENSIONS
+        )
+
         for root, dirs, files in os.walk(context.workspace_dir):
             if ".git" in root:
                 continue
 
             for file in files:
-                # todo: don't process binary files
+                if not any(file.endswith(ext) for ext in guid_reference_extensions):
+                    continue
 
                 file_path = os.path.join(root, file)
                 try:
