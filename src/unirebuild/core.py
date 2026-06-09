@@ -6,6 +6,7 @@ import sys
 
 import colorlog
 
+from . import steps
 from .steps import PatcherStep
 from .context import PatcherContext
 
@@ -28,6 +29,9 @@ class UniRebuild:
         )
 
         sys.stdout.reconfigure(line_buffering=True)
+
+        if not self.rebuild_steps:
+            self.rebuild_steps.append(steps.RebuildPatches())
 
         parser = argparse.ArgumentParser(
             description=f"UniRebuild - {self.context.game_name} Patcher"
