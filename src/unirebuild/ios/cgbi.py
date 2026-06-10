@@ -96,4 +96,6 @@ def cgbi_to_png(cgbi_path: str) -> bytes | None:
         if break_loop:
             break
 
+    png_file += b"\x00\x00\x00\x00IEND\xae\x42\x60\x82"
+
     return png_file
