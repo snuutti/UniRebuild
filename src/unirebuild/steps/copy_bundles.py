@@ -8,8 +8,11 @@ from unirebuild.steps import PatcherStep
 
 
 class CopyBundles(PatcherStep):
-    def __init__(self, bundles_path_arg: str = "bundles"):
+    def __init__(
+        self, bundles_path_arg: str = "bundles", delete_existing: bool = False
+    ):
         self.bundles_path_arg = bundles_path_arg
+        self.delete_existing = delete_existing
 
     def register_arguments(self, parser: ArgumentParser):
         parser.add_argument(
@@ -28,3 +31,19 @@ class CopyBundles(PatcherStep):
 
         logging.info("Copying bundles from '%s' to '%s'...", bundles_src, bundles_dst)
         shutil.copytree(bundles_src, bundles_dst)
+
+        if not self.delete_existing:
+            return
+
+        bundles = set()
+        for root, dirs, files in os.walk(bundles_dst):
+            for file in files:
+                bundles.add(file)
+
+        app_path = os.path.join(context.get_extracted_path(), "app")
+        for root, dirs, files in os.walk(app_path):
+            for file in files:
+                if file in bundles:
+                    file_path = os.path.join(root, file)
+                    logging.info("Deleting existing bundle '%s'...", file_path)
+                    os.remove(file_path)
