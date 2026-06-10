@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Python
+        uses: astral-sh/setup-uv@v8.2.0
+      - name: Build package
+        run: uv build
+      - name: Publish to PyPI
+        run: uv publish
