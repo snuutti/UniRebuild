@@ -11,7 +11,10 @@ class GitInit(PatcherStep):
     def execute(self, context: PatcherContext):
         git_path = context.find_executable("git")
         logging.info("Initializing Git repository...")
-        context.run_cmd([git_path, "init"], cwd=context.workspace_dir)
+        context.run_cmd(
+            [git_path, "-c", "init.defaultBranch=master", "init"],
+            cwd=context.workspace_dir,
+        )
         context.run_cmd(
             [git_path, "config", "core.autocrlf", "false"], cwd=context.workspace_dir
         )
