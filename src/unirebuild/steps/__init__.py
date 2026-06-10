@@ -8,6 +8,7 @@ from .decode_fsb_audio import DecodeFsbAudio
 from .deduplicate_assets import DeduplicateAssets
 from .delete_assets import DeleteAssets
 from .extract_app import ExtractApp
+from .extract_app_icon import ExtractAppIcon
 from .generate_deterministic_guids import GenerateDeterministicGuids
 from .git_commit import GitCommit
 from .git_init import GitInit
