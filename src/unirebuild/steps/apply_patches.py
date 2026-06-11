@@ -21,7 +21,17 @@ class ApplyPatches(PatcherStep):
         if patches:
             logging.info("Applying %d patches...", len(patches))
             context.run_cmd(
-                [git_path, "am", "--3way", "--ignore-whitespace"] + patches,
+                [
+                    git_path,
+                    "-c",
+                    "user.name=UniRebuild",
+                    "-c",
+                    "user.email=auto@mated.null",
+                    "am",
+                    "--3way",
+                    "--ignore-whitespace",
+                ]
+                + patches,
                 cwd=context.workspace_dir,
             )
         else:
