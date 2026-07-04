@@ -1,6 +1,6 @@
 [project]
 name = "unirebuild"
-version = "0.0.2"
+version = "0.0.3"
 description = "A modular framework for patching Unity games."
 readme = "README.md"
 authors = [
