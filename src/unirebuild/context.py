@@ -90,7 +90,15 @@ class PatcherContext:
     ) -> int:
         """Runs a command and returns the exit code."""
         logging.info("Running command: %s", " ".join(cmd))
+
+        sys.stdout.flush()
+        sys.stderr.flush()
+
         result = subprocess.run(cmd, cwd=cwd)
+
+        sys.stdout.flush()
+        sys.stderr.flush()
+
         if result.returncode != 0 and not ignore_errors:
             raise RuntimeError(f"Command failed with exit code {result.returncode}")
 
