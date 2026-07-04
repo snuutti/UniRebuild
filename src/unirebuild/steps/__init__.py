@@ -14,6 +14,7 @@ from .generate_deterministic_guids import GenerateDeterministicGuids
 from .git_commit import GitCommit
 from .git_init import GitInit
 from .populate_texture_settings import PopulateTextureSettings
+from .reapply_patches import ReapplyPatches
 from .rebuild_patches import RebuildPatches
 from .reencode_wavs import ReencodeWavs
 from .run_assetripper import RunAssetRipper

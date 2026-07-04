@@ -16,12 +16,16 @@ class UniRebuild:
         self.context = PatcherContext(game_name, workspace_dir, temp_dir)
         self.setup_steps = []
         self.rebuild_steps = []
+        self.reapply_steps = []
 
     def add_setup_steps(self, steps: list):
         self.setup_steps.extend(steps)
 
     def add_rebuild_steps(self, steps: list):
         self.rebuild_steps.extend(steps)
+
+    def add_reapply_steps(self, steps: list):
+        self.reapply_steps.extend(steps)
 
     def execute(self):
         colorlog.basicConfig(
@@ -33,6 +37,9 @@ class UniRebuild:
         if not self.rebuild_steps:
             self.rebuild_steps.append(steps.RebuildPatches())
 
+        if not self.reapply_steps:
+            self.reapply_steps.append(steps.ReapplyPatches())
+
         parser = argparse.ArgumentParser(
             description=f"UniRebuild - {self.context.game_name} Patcher"
         )
@@ -40,6 +47,7 @@ class UniRebuild:
 
         parser_setup = subparsers.add_parser("setup", help="Set up the workspace")
         parser_rebuild = subparsers.add_parser("rebuild", help="Rebuild all patches")
+        parser_reapply = subparsers.add_parser("reapply", help="Reapply all patches")
 
         for step in self.setup_steps:
             step.register_arguments(parser_setup)
@@ -47,11 +55,15 @@ class UniRebuild:
         for step in self.rebuild_steps:
             step.register_arguments(parser_rebuild)
 
+        for step in self.reapply_steps:
+            step.register_arguments(parser_reapply)
+
         args = parser.parse_args()
         self.context.args = args
 
         self.context.setup_steps = self.setup_steps
         self.context.rebuild_steps = self.rebuild_steps
+        self.context.reapply_steps = self.reapply_steps
 
         if args.command == "setup":
             if os.path.exists(self.context.workspace_dir):
@@ -79,6 +91,15 @@ class UniRebuild:
                 sys.exit(1)
 
             self.run_pipeline(self.rebuild_steps, False)
+        elif args.command == "reapply":
+            if not os.path.exists(self.context.workspace_dir):
+                logging.error(
+                    "Workspace directory '%s' does not exist. Please run 'setup' first.",
+                    self.context.workspace_dir,
+                )
+                sys.exit(1)
+
+            self.run_pipeline(self.reapply_steps, False)
 
     def run_pipeline(self, steps: list[PatcherStep], cleanup_temp: bool):
         dependencies = set()
