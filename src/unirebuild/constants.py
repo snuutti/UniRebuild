@@ -7,4 +7,5 @@ GUID_REFERENCE_EXTENSIONS = {
     ".mixer",
     ".prefab",
     ".unity",
+    ".playable",
 }
