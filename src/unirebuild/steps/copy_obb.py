@@ -28,9 +28,13 @@ class CopyObb(PatcherStep):
             )
 
         if os.path.isdir(obb_src):
-            logging.info("Copying OBB directory from '%s' to '%s'...", obb_src, app_target_path)
+            logging.info(
+                "Copying OBB directory from '%s' to '%s'...", obb_src, app_target_path
+            )
             shutil.copytree(obb_src, app_target_path)
         else:
-            logging.info("Extracting OBB file '%s' to '%s'...", obb_src, app_target_path)
+            logging.info(
+                "Extracting OBB file '%s' to '%s'...", obb_src, app_target_path
+            )
             with zipfile.ZipFile(obb_src, "r") as zip_ref:
                 zip_ref.extractall(app_target_path)
