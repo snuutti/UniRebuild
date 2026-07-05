@@ -2,6 +2,7 @@ from .base import PatcherStep
 from .apply_patches import ApplyPatches
 from .copy_bundles import CopyBundles
 from .copy_gitignore import CopyGitignore
+from .copy_obb import CopyObb
 from .copy_overrides import CopyOverrides
 from .custom_action import CustomAction
 from .decode_fsb_audio import DecodeFsbAudio
