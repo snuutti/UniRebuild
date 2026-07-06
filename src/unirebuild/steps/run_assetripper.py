@@ -8,16 +8,27 @@ import urllib.request
 import urllib.error
 
 from unirebuild.context import PatcherContext
-from unirebuild.steps import PatcherStep
+from unirebuild.steps import PatcherStep, CopyBundles
 
 
 class RunAssetRipper(PatcherStep):
     def get_dependencies(self) -> list[str]:
         return ["AssetRipper.GUI.Free"]
 
+    @staticmethod
+    def get_input_dir(context: PatcherContext) -> str:
+        # This works around a weird issue where AssetRipper won't export every scene in games where the OBB was copied.
+        # Looking at the AssetRipper UI the scene IS loaded, just the export doesn't happen.
+
+        for step in context.setup_steps:
+            if isinstance(step, CopyBundles):
+                return context.get_extracted_path()
+
+        return os.path.join(context.get_extracted_path(), "app")
+
     def execute(self, context: PatcherContext):
         assetripper_path = context.find_executable("AssetRipper.GUI.Free")
-        input_dir = context.get_extracted_path()
+        input_dir = self.get_input_dir(context)
         output_dir = context.get_temp_path("RippedProject")
 
         cmd = [assetripper_path, "--headless", "--log=false", "--port=6464"]
