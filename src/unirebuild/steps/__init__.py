@@ -17,6 +17,7 @@ from .git_init import GitInit
 from .populate_texture_settings import PopulateTextureSettings
 from .reapply_patches import ReapplyPatches
 from .rebuild_patches import RebuildPatches
+from .recover_spritemask_layers import RecoverSpriteMaskLayers
 from .reencode_wavs import ReencodeWavs
 from .run_assetripper import RunAssetRipper
 from .swap_files import SwapFiles
