@@ -2,6 +2,7 @@ import collections
 import glob
 import logging
 import os
+from typing import Optional, List
 
 import yaml
 
@@ -22,14 +23,12 @@ def represent_none(self: yaml.Dumper, _) -> yaml.Node:
 
 
 class PopulateTextureSettings(PatcherStep):
-    def execute(self, context: PatcherContext):
-        logging.info("Populating texture platform settings...")
-
-        yaml.add_representer(FlowDict, represent_flow_dict)
-        yaml.add_representer(type(None), represent_none)
-
-        # todo: make configurable
-        required_order = [
+    def __init__(
+        self,
+        required_order: Optional[List[str]] = None,
+        search_patterns: Optional[List[str]] = None,
+    ):
+        self.required_order = required_order or [
             "DefaultTexturePlatform",
             "Standalone",
             "Android",
@@ -37,12 +36,24 @@ class PopulateTextureSettings(PatcherStep):
             "WebGL",
         ]
 
-        # todo: make configurable
-        png_metas = glob.glob(
-            os.path.join(context.workspace_dir, "Assets", "**", "*.png.meta"),
-            recursive=True,
-        )
-        for meta_path in png_metas:
+        self.search_patterns = search_patterns or [
+            os.path.join("Assets", "**", "*.png.meta")
+        ]
+
+    def execute(self, context: PatcherContext):
+        logging.info("Populating texture platform settings...")
+
+        yaml.add_representer(FlowDict, represent_flow_dict)
+        yaml.add_representer(type(None), represent_none)
+
+        meta_paths = []
+        for pattern in self.search_patterns:
+            full_pattern = os.path.join(context.workspace_dir, pattern)
+            meta_paths.extend(glob.glob(full_pattern, recursive=True))
+
+        meta_paths = list(set(meta_paths))
+
+        for meta_path in meta_paths:
             try:
                 with open(meta_path, "r", encoding="utf-8") as f:
                     data = yaml.safe_load(f)
@@ -79,7 +90,7 @@ class PopulateTextureSettings(PatcherStep):
                 new_settings_list = []
                 modified = False
 
-                for target in required_order:
+                for target in self.required_order:
                     if target in existing_targets:
                         new_settings_list.extend(existing_targets[target])
                     else:
@@ -90,7 +101,7 @@ class PopulateTextureSettings(PatcherStep):
                         modified = True
 
                 for target_name, entries in existing_targets.items():
-                    if target_name not in required_order:
+                    if target_name not in self.required_order:
                         new_settings_list.extend(entries)
 
                 if not modified and new_settings_list != settings_list:
