@@ -1,3 +1,4 @@
+import glob
 import logging
 import os.path
 import shutil
@@ -12,19 +13,26 @@ class DeleteAssets(PatcherStep):
 
     def execute(self, context: PatcherContext):
         for asset in self.assets:
-            full_path = os.path.join(context.workspace_dir, asset)
-            if not os.path.exists(full_path):
+            pattern = os.path.join(context.workspace_dir, asset)
+            matched_paths = glob.glob(pattern, recursive=True)
+
+            if not matched_paths:
                 raise FileNotFoundError(
-                    f"Asset '{asset}' not found at path '{full_path}'."
+                    f"Asset or pattern '{asset}' did not match any files at '{pattern}'."
                 )
 
-            logging.info("Deleting asset: %s", asset)
+            for full_path in matched_paths:
+                if not os.path.exists(full_path):
+                    continue
 
-            if os.path.isdir(full_path):
-                shutil.rmtree(full_path)
-            else:
-                os.remove(full_path)
+                rel_path = os.path.relpath(full_path, context.workspace_dir)
+                logging.info("Deleting asset: %s", rel_path)
 
-            meta_path = full_path + ".meta"
-            if os.path.exists(meta_path):
-                os.remove(meta_path)
+                if os.path.isdir(full_path):
+                    shutil.rmtree(full_path)
+                else:
+                    os.remove(full_path)
+
+                meta_path = full_path + ".meta"
+                if os.path.exists(meta_path):
+                    os.remove(meta_path)
